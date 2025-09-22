@@ -70,8 +70,8 @@ const LoginPage = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-m">BudgetBuddy</div>
           <div className="flex justify-center space-x-10 flex-grow">
-            <a href="#" className="hover:text-gray-300">Home</a>
-            <a href="#" className="hover:text-gray-300">About</a>
+            <a href="/" className="hover:text-gray-300">Home</a>
+            <a href="/about" className="hover:text-gray-300">About</a>
           </div>
         </div>
       </nav>

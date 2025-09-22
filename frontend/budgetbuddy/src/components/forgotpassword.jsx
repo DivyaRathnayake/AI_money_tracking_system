@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { FaTimes } from "react-icons/fa"; // ❌ Cut/close icon
+import { FaTimes } from "react-icons/fa"; //  Cut/close icon
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -9,10 +9,10 @@ export default function ForgotPassword() {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:5000/forgot-password", { email });
-      alert(res.data.message); // ✅ Success popup
+      alert(res.data.message); //  Success popup
       setEmail(""); // clear input
     } catch (err) {
-      alert(err.response?.data?.message || "Something went wrong"); // ❌ Error popup
+      alert(err.response?.data?.message || "Something went wrong"); 
     }
   };
 

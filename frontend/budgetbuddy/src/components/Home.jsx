@@ -27,7 +27,7 @@ const LandingPage = () => {
               className="hover:text-purple-600"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/"); // Navigate to Home Page
+                navigate("/"); 
               }}
             >
               Home

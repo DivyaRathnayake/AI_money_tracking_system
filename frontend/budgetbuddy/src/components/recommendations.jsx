@@ -8,9 +8,13 @@ export default function RecommendationPage() {
   const [expenses, setExpenses] = useState(0);
   const [itemPrice, setItemPrice] = useState("");
   const [message, setMessage] = useState("");
+  const [budgetPlan, setBudgetPlan] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
   const navigate = useNavigate();
 
-  // 🔹 Fetch total income & expenses automatically from backend
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -26,21 +30,33 @@ export default function RecommendationPage() {
       .catch((err) => console.error("Error fetching summary:", err));
   }, []);
 
-  const handleCheck = () => {
-    const totalIncome = parseFloat(income) || 0;
-    const totalExpenses = parseFloat(expenses) || 0;
-    const price = parseFloat(itemPrice) || 0;
+  const handleCheck = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    const balance = totalIncome - totalExpenses;
+    try {
+      const res = await fetch("http://localhost:5000/recommendation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ income, expenses, itemPrice }),
+      });
 
-    if (balance <= 0) {
-      setMessage("⚠️ You don’t have any savings. Better to save before buying.");
-    } else if (price <= balance * 0.3) {
-      setMessage("✅ Good choice! You can afford this purchase safely.");
-    } else if (price <= balance) {
-      setMessage("🟡 You can buy it, but it may affect your savings.");
-    } else {
-      setMessage("❌ Not affordable right now. Try saving more first.");
+      const data = await res.json();
+      setMessage(data.recommendation || "No recommendation received.");
+      setBudgetPlan(data.budgetPlan || []);
+      setBalance(data.balance || 0);
+      setPrice(data.price || 0);
+
+      if (data.budgetPlan && data.budgetPlan.length > 0) {
+        setShowModal(true); // Show modal if budget plan exists
+      }
+    } catch (err) {
+      console.error("Error fetching recommendation:", err);
+      setMessage("Something went wrong while fetching recommendation.");
+      setBudgetPlan([]);
     }
   };
 
@@ -72,21 +88,20 @@ export default function RecommendationPage() {
         </div>
       </nav>
 
-      {/* ✅ Image in top-right corner */}
+      {/* Image */}
       <img
         src={recommendationsImage}
         alt="Recommendations"
         className="absolute top-20 right-20 w-60 h-70 object-contain"
       />
 
-      {/* Topic with extra spacing */}
+      {/* Topic */}
       <h1 className="text-3xl font-bold mt-14 mb-14 text-center">
         We give recommendations for your future purchases
       </h1>
-      
-      {/* Body section */}
+
+      {/* Body */}
       <div className="bg-pink-100 p-10 rounded-lg shadow-lg w-96">
-        {/* Auto-filled */}
         <label className="block font-semibold mb-2">Total Income</label>
         <input
           type="number"
@@ -103,7 +118,9 @@ export default function RecommendationPage() {
           className="w-full p-2 border rounded mb-4 bg-gray-100"
         />
 
-        <label className="block font-semibold mb-2">Price of Item you want to buy</label>
+        <label className="block font-semibold mb-2">
+          Price of Item you want to buy
+        </label>
         <input
           type="number"
           value={itemPrice}
@@ -124,6 +141,30 @@ export default function RecommendationPage() {
           </div>
         )}
       </div>
+
+      {/* Budget Plan Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
+            <h2 className="text-xl font-bold mb-4 text-center">Budget Plan</h2>
+            <p className="mb-2">Current Balance: LKR {balance.toFixed(2)}</p>
+            <p className="mb-4">Item Price: LKR {price.toFixed(2)}</p>
+            <ul className="list-disc ml-5 mb-4">
+              {budgetPlan.map((plan, index) => (
+                <li key={index}>
+                  Save LKR {plan.savePerMonth.toLocaleString()} per month for {plan.months} {plan.months === 1 ? "month" : "months"}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => setShowModal(false)}
+              className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-800 w-full"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,43 +33,60 @@ db.connect((err) => {
   console.log("✅ MySQL Connected...");
 });
 
-// --- Auth Middleware ---
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"] || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
-  if (!token) return res.status(401).json({ message: "No token provided" });
+// --- Google Gemini API Setup ---
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// --- JWT Authentication Middleware ---
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Access denied. No token provided." });
+  }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid or expired token" });
+    if (err) return res.status(403).json({ message: "Invalid token" });
     req.user = user;
     next();
   });
-};
+}
 
 // --- Health Check ---
 app.get("/", (_req, res) => res.send("✅ Backend is running 🚀"));
 
 // ========================= AUTH ROUTES =========================
+
 // Signup
 app.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    if (!username || !email || !password) return res.status(400).json({ message: "All fields required" });
+    if (!username || !email || !password)
+      return res.status(400).json({ message: "All fields required" });
 
-    db.query("SELECT id FROM user WHERE username = ? OR email = ?", [username, email], async (err, result) => {
-      if (err) return res.status(500).json({ message: err.message });
-      if (result.length > 0) return res.status(400).json({ message: "Username or email exists" });
+    db.query(
+      "SELECT id FROM user WHERE username = ? OR email = ?",
+      [username, email],
+      async (err, result) => {
+        if (err) return res.status(500).json({ message: err.message });
+        if (result.length > 0)
+          return res.status(400).json({ message: "Username or email exists" });
 
-      const hashed = await bcrypt.hash(password, 10);
-      db.query("INSERT INTO user (username, email, password) VALUES (?, ?, ?)", [username, email, hashed], (err2, insertRes) => {
-        if (err2) return res.status(500).json({ message: err2.message });
+        const hashed = await bcrypt.hash(password, 10);
+        db.query(
+          "INSERT INTO user (username, email, password) VALUES (?, ?, ?)",
+          [username, email, hashed],
+          (err2, insertRes) => {
+            if (err2) return res.status(500).json({ message: err2.message });
 
-        const user = { id: insertRes.insertId, username, email };
-        const token = jwt.sign({ id: user.id, username }, JWT_SECRET, { expiresIn: "1h" });
+            const user = { id: insertRes.insertId, username, email };
+            const token = jwt.sign({ id: user.id, username }, JWT_SECRET, { expiresIn: "1h" });
 
-        return res.status(201).json({ message: "User registered", token, user });
-      });
-    });
+            return res.status(201).json({ message: "User registered", token, user });
+          }
+        );
+      }
+    );
   } catch {
     return res.status(500).json({ message: "Server error" });
   }
@@ -77,40 +95,56 @@ app.post("/signup", async (req, res) => {
 // Login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ message: "Username & password required" });
+  if (!username || !password)
+    return res.status(400).json({ message: "Username & password required" });
 
-  db.query("SELECT id, username, email, password FROM user WHERE username = ?", [username], async (err, rows) => {
-    if (err) return res.status(500).json({ message: err.message });
-    if (rows.length === 0) return res.status(401).json({ message: "User not found" });
+  db.query(
+    "SELECT id, username, email, password FROM user WHERE username = ?",
+    [username],
+    async (err, rows) => {
+      if (err) return res.status(500).json({ message: err.message });
+      if (rows.length === 0) return res.status(401).json({ message: "User not found" });
 
-    const userRow = rows[0];
-    const ok = await bcrypt.compare(password, userRow.password);
-    if (!ok) return res.status(401).json({ message: "Invalid password" });
+      const userRow = rows[0];
+      const ok = await bcrypt.compare(password, userRow.password);
+      if (!ok) return res.status(401).json({ message: "Invalid password" });
 
-    const token = jwt.sign({ id: userRow.id, username: userRow.username }, JWT_SECRET, { expiresIn: "1h" });
-    return res.status(200).json({ message: "Login successful", token, user: { id: userRow.id, username: userRow.username, email: userRow.email } });
-  });
+      const token = jwt.sign({ id: userRow.id, username: userRow.username }, JWT_SECRET, { expiresIn: "1h" });
+
+      return res.status(200).json({
+        message: "Login successful",
+        token,
+        user: { id: userRow.id, username: userRow.username, email: userRow.email },
+      });
+    }
+  );
 });
 
 // ========================= INCOME ROUTES =========================
 const updateTotalIncome = (userId) => {
-  db.query("SELECT COALESCE(SUM(income),0) AS total FROM incomes WHERE user_id = ?", [userId], (err, rows) => {
-    if (err) return console.error(err.message);
-    const total = Number(rows[0].total || 0);
-    db.query("UPDATE user SET total_income = ? WHERE id = ?", [total, userId], (err2) => {
-      if (err2) console.error(err2.message);
-    });
-  });
+  db.query(
+    "SELECT COALESCE(SUM(income),0) AS total FROM incomes WHERE user_id = ?",
+    [userId],
+    (err, rows) => {
+      if (err) return console.error(err.message);
+      const total = Number(rows[0].total || 0);
+      db.query("UPDATE user SET total_income = ? WHERE id = ?", [total, userId], (err2) => {
+        if (err2) console.error(err2.message);
+      });
+    }
+  );
 };
 
 // Create income
 app.post("/income", authenticateToken, (req, res) => {
   const { source, income } = req.body;
   const userId = req.user.id;
-  if (!source || income === undefined) return res.status(400).json({ message: "source & income required" });
+  if (!source || income === undefined)
+    return res.status(400).json({ message: "source & income required" });
 
   const value = Number(income);
-  if (!Number.isFinite(value) || value < 0) return res.status(400).json({ message: "income must be non-negative" });
+  if (!Number.isFinite(value) || value < 0)
+    return res.status(400).json({ message: "income must be non-negative" });
 
   db.query("INSERT INTO incomes (user_id, source, income) VALUES (?, ?, ?)", [userId, source.trim(), value], (err, result) => {
     if (err) return res.status(500).json({ message: err.message });
@@ -141,7 +175,11 @@ app.put("/income/:id", authenticateToken, (req, res) => {
   const params = [];
 
   if (source) { fields.push("source=?"); params.push(source.trim()); }
-  if (income !== undefined) { const val = Number(income); if (!Number.isFinite(val)||val<0) return res.status(400).json({message:"income must be non-negative"}); fields.push("income=?"); params.push(val); }
+  if (income !== undefined) {
+    const val = Number(income);
+    if (!Number.isFinite(val) || val < 0) return res.status(400).json({ message: "income must be non-negative" });
+    fields.push("income=?"); params.push(val);
+  }
   if (!fields.length) return res.status(400).json({ message: "Nothing to update" });
 
   const q = `UPDATE incomes SET ${fields.join(", ")} WHERE id=? AND user_id=?`;
@@ -185,7 +223,7 @@ app.post("/expense", authenticateToken, (req, res) => {
   if (!source || amount === undefined) return res.status(400).json({ message: "source & amount required" });
 
   const val = Number(amount);
-  if (!Number.isFinite(val)||val<0) return res.status(400).json({ message: "amount must be non-negative" });
+  if (!Number.isFinite(val) || val < 0) return res.status(400).json({ message: "amount must be non-negative" });
 
   db.query("INSERT INTO expenses (user_id, source, amount) VALUES (?, ?, ?)", [userId, source.trim(), val], (err, result) => {
     if (err) return res.status(500).json({ message: err.message });
@@ -215,7 +253,11 @@ app.put("/expense/:id", authenticateToken, (req, res) => {
   const fields = [];
   const params = [];
   if (source) { fields.push("source=?"); params.push(source.trim()); }
-  if (amount !== undefined) { const val = Number(amount); if (!Number.isFinite(val)||val<0) return res.status(400).json({ message: "amount must be non-negative" }); fields.push("amount=?"); params.push(val); }
+  if (amount !== undefined) {
+    const val = Number(amount);
+    if (!Number.isFinite(val) || val < 0) return res.status(400).json({ message: "amount must be non-negative" });
+    fields.push("amount=?"); params.push(val);
+  }
   if (!fields.length) return res.status(400).json({ message: "Nothing to update" });
 
   const q = `UPDATE expenses SET ${fields.join(", ")} WHERE id=? AND user_id=?`;
@@ -250,16 +292,60 @@ app.get("/summary", authenticateToken, (req, res) => {
   `;
   db.query(q, [userId, userId], (err, rows) => {
     if (err) return res.status(500).json({ message: err.message });
-    return res.status(200).json({
-      total_income: Number(rows[0].total_income),
-      total_expenses: Number(rows[0].total_expenses),
-    });
+    return res.status(200).json({ total_income: Number(rows[0].total_income), total_expenses: Number(rows[0].total_expenses) });
   });
 });
 
-// ========================= FORGOT PASSWORD =========================
+// ========================= RECOMMENDATION (AI) =========================
+app.post("/recommendation", authenticateToken, async (req, res) => {
+  try {
+    const { income, expenses, itemPrice } = req.body;
+    if (income === undefined || expenses === undefined || itemPrice === undefined)
+      return res.status(400).json({ error: "Missing required fields" });
 
-// Send password reset link
+    const balance = income - expenses;
+    const price = Number(itemPrice);
+    let aiMessage = "";
+    let budgetPlan = null;
+
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const prompt = `
+        You are a financial advisor.
+        User has total income: LKR ${income}, total expenses: LKR ${expenses}, 
+        current balance: LKR ${balance}, and wants to buy an item worth LKR ${itemPrice}.
+        Give a clear recommendation including:
+        - If they can afford it, how much will remain after purchase.
+        - If they cannot afford it, show current savings and how much more is needed.
+        - Suggest a simple monthly saving plan to buy it in next 3-6 months.
+        - Keep it short and friendly.
+      `;
+      const result = await model.generateContent(prompt);
+      aiMessage = result.response.candidates[0].content.parts[0].text;
+    } catch (aiErr) {
+      console.error("AI API failed, using fallback rules:", aiErr);
+      if (balance <= 0) {
+        aiMessage = `⚠️ You have no savings. Current balance: LKR ${balance.toFixed(2)}. Better to save before buying.`;
+      } else if (price <= balance) {
+        const remaining = balance - price;
+        aiMessage = `✅ You can afford this purchase. Spend LKR ${price.toFixed(2)} and you'll have LKR ${remaining.toFixed(2)} remaining for savings.`;
+      } else {
+        const needed = price - balance;
+        const monthsOptions = [3, 6, 12];
+        budgetPlan = monthsOptions.map((m) => ({ months: m, savePerMonth: (needed / m).toFixed(2) }));
+        aiMessage = `❌ Not affordable right now. Current savings: LKR ${balance.toFixed(2)}. You need LKR ${needed.toFixed(2)} more to buy this item. Here's a budget plan to save over the next months:`;
+      }
+    }
+
+    res.json({ recommendation: aiMessage, balance, price, budgetPlan });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: "Recommendation failed" });
+  }
+});
+
+// ========================= PASSWORD RESET =========================
+// Forgot password
 app.post("/forgot-password", (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: "Email required" });
@@ -283,7 +369,6 @@ app.post("/forgot-password", (req, res) => {
       });
 
       const resetLink = `http://localhost:3000/reset-password/${token}`;
-
       const mailOptions = {
         from: process.env.EMAIL_USER || "your_email@gmail.com",
         to: email,
@@ -291,7 +376,7 @@ app.post("/forgot-password", (req, res) => {
         text: `Click here to reset your password: ${resetLink} \n\nLink expires in 1 hour.`,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
+      transporter.sendMail(mailOptions, (error) => {
         if (error) return res.status(500).json({ message: error.message });
         res.json({ message: "Password reset link sent to your email" });
       });
@@ -307,27 +392,20 @@ app.post("/reset-password/:token", async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-
     db.query("SELECT * FROM user WHERE id=? AND reset_token=?", [decoded.id, token], async (err, rows) => {
       if (err) return res.status(500).json({ message: err.message });
       if (rows.length === 0) return res.status(400).json({ message: "Invalid or expired token" });
 
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      db.query(
-        "UPDATE user SET password=?, reset_token=NULL WHERE id=?",
-        [hashedPassword, decoded.id],
-        (err2) => {
-          if (err2) return res.status(500).json({ message: err2.message });
-          res.json({ message: "Password successfully reset" });
-        }
-      );
+      db.query("UPDATE user SET password=?, reset_token=NULL WHERE id=?", [hashedPassword, decoded.id], (err2) => {
+        if (err2) return res.status(500).json({ message: err2.message });
+        res.json({ message: "Password successfully reset" });
+      });
     });
-  } catch (err) {
+  } catch {
     return res.status(400).json({ message: "Invalid or expired token" });
   }
 });
-
 
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
