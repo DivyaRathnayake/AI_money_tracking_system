@@ -51,7 +51,7 @@ export default function RecommendationPage() {
       setPrice(data.price || 0);
 
       if (data.budgetPlan && data.budgetPlan.length > 0) {
-        setShowModal(true); // Show modal if budget plan exists
+        setShowModal(true); 
       }
     } catch (err) {
       console.error("Error fetching recommendation:", err);
@@ -67,7 +67,7 @@ export default function RecommendationPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-pink-100 to-white relative items-center">
-      {/* Navbar */}
+    
       <nav className="bg-pink-300 p-4 text-gray-700 shadow-md w-full">
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-lg">BudgetBuddy</div>
@@ -88,19 +88,18 @@ export default function RecommendationPage() {
         </div>
       </nav>
 
-      {/* Image */}
+    
       <img
         src={recommendationsImage}
         alt="Recommendations"
         className="absolute top-20 right-20 w-60 h-70 object-contain"
       />
 
-      {/* Topic */}
       <h1 className="text-3xl font-bold mt-14 mb-14 text-center">
         We give recommendations for your future purchases
       </h1>
 
-      {/* Body */}
+   
       <div className="bg-pink-100 p-10 rounded-lg shadow-lg w-96">
         <label className="block font-semibold mb-2">Total Income</label>
         <input
@@ -142,7 +141,7 @@ export default function RecommendationPage() {
         )}
       </div>
 
-      {/* Budget Plan Modal */}
+   
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">

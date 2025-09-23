@@ -11,11 +11,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
 
-// --- Middleware ---
+// Middleware 
 app.use(cors({ origin: ["http://localhost:3000"], credentials: false }));
 app.use(express.json());
 
-// --- MySQL Connection ---
+// MySQL Connection 
 const db = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -32,10 +32,10 @@ db.connect((err) => {
   console.log("✅ MySQL Connected...");
 });
 
-// --- Google Gemini API Setup ---
+// Google Gemini API Setup 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// --- JWT Authentication Middleware ---
+// WT Authentication Middleware 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -51,10 +51,9 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// --- Health Check ---
 app.get("/", (_req, res) => res.send("✅ Backend is running 🚀"));
 
-// ========================= AUTH ROUTES =========================
+
 
 // Signup
 app.post("/signup", async (req, res) => {
@@ -119,7 +118,7 @@ app.post("/login", (req, res) => {
   );
 });
 
-// ========================= INCOME ROUTES =========================
+
 const updateTotalIncome = (userId) => {
   db.query(
     "SELECT COALESCE(SUM(income),0) AS total FROM incomes WHERE user_id = ?",
@@ -204,7 +203,9 @@ app.delete("/income/:id", authenticateToken, (req, res) => {
   });
 });
 
-// ========================= EXPENSE ROUTES =========================
+
+
+
 const updateTotalExpense = (userId) => {
   db.query("SELECT COALESCE(SUM(amount),0) AS total FROM expenses WHERE user_id=?", [userId], (err, rows) => {
     if (err) return console.error(err.message);
@@ -281,7 +282,7 @@ app.delete("/expense/:id", authenticateToken, (req, res) => {
   });
 });
 
-// ========================= SUMMARY ROUTE =========================
+// summary
 app.get("/summary", authenticateToken, (req, res) => {
   const userId = req.user.id;
   const q = `
@@ -295,7 +296,7 @@ app.get("/summary", authenticateToken, (req, res) => {
   });
 });
 
-// ========================= RECOMMENDATION (AI) =========================
+// RECOMMENDATION (AI) 
 app.post("/recommendation", authenticateToken, async (req, res) => {
   try {
     const { income, expenses, itemPrice } = req.body;
@@ -343,7 +344,7 @@ app.post("/recommendation", authenticateToken, async (req, res) => {
   }
 });
 
-// ========================= PASSWORD RESET =========================
+
 // Forgot password
 app.post("/forgot-password", (req, res) => {
   const { email } = req.body;
@@ -406,5 +407,5 @@ app.post("/reset-password/:token", async (req, res) => {
   }
 });
 
-// --- Start Server ---
+
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

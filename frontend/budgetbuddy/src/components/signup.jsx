@@ -16,7 +16,7 @@ const SignUpPage = () => {
   const [formErrors, setFormErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Popup state
+
   const [popup, setPopup] = useState({ show: false, message: '', type: '' });
 
   useEffect(() => {
@@ -105,7 +105,7 @@ const SignUpPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 relative">
-      {/* ✅ Top Center Popup */}
+   
       {popup.show && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
           <div
@@ -122,7 +122,7 @@ const SignUpPage = () => {
         </div>
       )}
 
-      {/* Navigation Bar */}
+
       <nav className="bg-purple-300 p-4 text-gray-500" data-aos="fade-down">
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-m">BudgetBuddy</div>
@@ -133,14 +133,14 @@ const SignUpPage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+  
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-[900px] flex" data-aos="zoom-in">
-          {/* Left Side - Form */}
+ 
           <div className="w-1/2 pr-8" data-aos="fade-right">
             <h1 className="text-2xl font-bold text-center mb-6">BUDGET BUDDY</h1>
             <form onSubmit={handleSignUp}>
-              {/* Username */}
+    
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">Username</label>
                 <input
@@ -154,7 +154,7 @@ const SignUpPage = () => {
                 {formErrors.username && <p className="text-red-500 text-xs mt-1">{formErrors.username}</p>}
               </div>
 
-              {/* Email */}
+    
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email</label>
                 <input
@@ -168,7 +168,6 @@ const SignUpPage = () => {
                 {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
               </div>
 
-              {/* Password */}
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">Password</label>
                 <input
@@ -182,7 +181,6 @@ const SignUpPage = () => {
                 {formErrors.password && <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>}
               </div>
 
-              {/* Confirm Password */}
               <div className="mb-6">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">Confirm Password</label>
                 <input
@@ -215,7 +213,7 @@ const SignUpPage = () => {
             </p>
           </div>
 
-          {/* Right Side - Image */}
+      
           <div className="w-1/2 flex items-center justify-center" data-aos="fade-left">
             <img src={girl} alt="Happy girl" className="max-w-xs md:max-w-md rounded-lg" />
           </div>

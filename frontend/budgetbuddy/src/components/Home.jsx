@@ -1,17 +1,16 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import girlhome from "../assets/img.png"; // Ensure this path is correct
-import AOS from "aos"; // Import AOS
-import "aos/dist/aos.css"; // Import AOS CSS
+import { useNavigate } from "react-router-dom"; 
+import girlhome from "../assets/img.png"; 
+import AOS from "aos"; 
+import "aos/dist/aos.css"; 
 
 const LandingPage = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
-  // Initialize AOS
   useEffect(() => {
     AOS.init({
-      duration: 1000, // Animation duration
-      once: true, // Whether animation should happen only once
+      duration: 1000, 
+      once: true, // animation should happen only once
     });
   }, []);
 
@@ -37,7 +36,7 @@ const LandingPage = () => {
               className="hover:text-purple-600"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/about"); // Navigate to About Page
+                navigate("/about"); 
               }}
             >
               About
@@ -49,8 +48,8 @@ const LandingPage = () => {
             href="#"
             className="hover:text-purple-600"
             onClick={(e) => {
-              e.preventDefault(); // Prevent default link behavior
-              navigate("/login"); // Navigate to the Login Page
+              e.preventDefault(); 
+              navigate("/login"); 
             }}
           >
             Login
@@ -61,7 +60,7 @@ const LandingPage = () => {
             className="hover:text-purple-600"
             onClick={(e) => {
               e.preventDefault();
-              navigate("/signup"); // Navigate to the Signup Page
+              navigate("/signup"); 
             }}
           >
             Signup
@@ -90,7 +89,7 @@ const LandingPage = () => {
             data-aos-delay="400"
             onClick={(e) => {
               e.preventDefault();
-              navigate("/welcome"); // Navigate to the Welcome Page
+              navigate("/welcome"); 
             }}
           >
             Get Started

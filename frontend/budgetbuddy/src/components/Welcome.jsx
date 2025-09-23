@@ -14,7 +14,7 @@ const WelcomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navigation Bar */}
+   
       <nav className="bg-purple-300 p-4 text-gray-500" data-aos="fade-down">
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-m">BudgetBuddy</div>
@@ -26,16 +26,15 @@ const WelcomePage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+  
       <div className="container mx-auto p-4">
         <div className="text-center mt-10" data-aos="zoom-in">
           <h1 className="text-4xl font-bold mb-4">Beginner to Pro</h1>
           <p className="text-lg mb-8">Start Your Journey Toward Smarter Financial Management with Budget Buddy!</p>
         </div>
 
-        {/* Flex Container for Left and Right Sections */}
         <div className="flex justify-between items-start mt-12">
-          {/* Part 1: For New Users (Left Side) */}
+    
           <div className="w-[40%] bg-purple-100 p-8 rounded-lg shadow-md mr-4" data-aos="fade-right">
             <div className="text-center">
               <div className="text-xl font-semibold">Create your Account</div>
@@ -50,7 +49,7 @@ const WelcomePage = () => {
             </div>
           </div>
 
-          {/* Part 2: For Returning Users (Right Side) */}
+   
           <div className="w-[40%] bg-purple-100 p-8 rounded-lg shadow-md ml-4" data-aos="fade-left">
             <div className="text-center">
               <div className="text-xl font-semibold">Log in to your Account</div>

@@ -13,9 +13,9 @@ const HelloPage = () => {
   }, []);
 
   const handleLogout = () => {
-    // Clear any stored login info if needed
-    localStorage.removeItem("token"); // example if you stored JWT
-    navigate("/"); // redirect to home page
+    
+    localStorage.removeItem("token"); 
+    navigate("/"); 
   };
 
   return (
@@ -32,7 +32,7 @@ const HelloPage = () => {
             <Link to="/recommendations" className="hover:text-gray-900" data-aos="fade-down" data-aos-delay="500">Recommendations</Link>
           </div>
 
-          {/* Logout Button with Icon */}
+      
           <button
             onClick={handleLogout}
             className="bg-red-800 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center space-x-2"
@@ -43,7 +43,7 @@ const HelloPage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+    
       <div className="flex flex-col items-center justify-center flex-grow text-center p-10">
         <h1 className="text-5xl font-bold mb-4" data-aos="fade-up">Hello,</h1>
         <h1 className="text-5xl font-bold mb-4" data-aos="fade-up" data-aos-delay="200">

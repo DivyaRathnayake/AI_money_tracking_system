@@ -14,7 +14,6 @@ const ExpensesGraphPage = () => {
   const [loading, setLoading] = useState(true);
   const chartRef = useRef(null);
 
-  // Fetch expenses and total from backend
   const fetchExpenses = async () => {
     try {
       const token = localStorage.getItem("token");

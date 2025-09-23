@@ -67,18 +67,18 @@ const IncomeGraphPage = () => {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 10;
 
-    // Top center: Total Income
+    
     pdf.setFontSize(16);
     pdf.text(`Total Income: ${total}`, pageWidth / 2, 15, { align: "center" });
 
-    // Smaller chart below total income
-    const chartWidth = 120; // smaller width in mm
+    
+    const chartWidth = 120; 
     const chartHeight = (chartRef.current.height / chartRef.current.width) * chartWidth;
     const chartX = (pageWidth - chartWidth) / 2; // center horizontally
     pdf.addImage(chartImage, "PNG", chartX, 25, chartWidth, chartHeight);
 
-    // List below chart
-    let yPos = 25 + chartHeight + 10; // 10mm spacing
+    
+    let yPos = 25 + chartHeight + 10; 
     pdf.setFontSize(12);
     incomeArray.forEach((item, index) => {
       const percent = total > 0 ? ((item.income / total) * 100).toFixed(2) : 0;
@@ -111,7 +111,7 @@ const IncomeGraphPage = () => {
         </div>
       </nav>
 
-      {/* Chart and Income List */}
+      
       <div className="bg-white p-6 rounded-lg shadow-lg mt-10 max-w-md mx-auto">
         <h2 className="text-2xl font-bold mb-4 text-center">Your Total Income</h2>
 

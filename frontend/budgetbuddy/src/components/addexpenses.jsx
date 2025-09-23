@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import expenseImage from "../assets/expenses.png";
 
-// 📌 PDF imports
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -16,7 +15,7 @@ export default function AddExpensesPage() {
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
 
-  // ✅ Notification state
+  // Notification state
   const [notification, setNotification] = useState({ message: "", type: "" });
 
   // Show notification for 3s
@@ -65,13 +64,13 @@ export default function AddExpensesPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Logout
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  // Add / Update expense
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -115,7 +114,6 @@ export default function AddExpensesPage() {
     }
   };
 
-  // Delete expense
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
 
@@ -139,14 +137,14 @@ export default function AddExpensesPage() {
     }
   };
 
-  // Edit expense
+
   const handleEdit = (expense) => {
     setFormData({ source: expense.source, amount: expense.amount });
     setEditMode(true);
     setCurrentId(expense.id);
   };
 
-  // 📌 Generate PDF
+  // Generate PDF
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.text("Expense Report", 14, 15);
@@ -180,7 +178,7 @@ export default function AddExpensesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-pink-100 to-white relative">
-      {/* ✅ Notification */}
+      
       {notification.message && (
         <div
           className={`fixed top-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded shadow-lg text-white z-50 ${
@@ -191,7 +189,7 @@ export default function AddExpensesPage() {
         </div>
       )}
 
-      {/* Navbar */}
+      
       <nav className="bg-pink-300 p-4 text-gray-700 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-lg">BudgetBuddy</div>
@@ -212,13 +210,13 @@ export default function AddExpensesPage() {
         </div>
       </nav>
 
-      {/* Main Container */}
+      
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-8 relative z-10">
         <h2 className="text-3xl font-bold mb-6 text-center">
           {editMode ? "Edit Expense" : "Your Expenses"}
         </h2>
 
-        {/* Form */}
+      
         <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-4 max-w-md mx-auto">
           <input
             type="text"
@@ -261,7 +259,7 @@ export default function AddExpensesPage() {
           </div>
         </form>
 
-        {/* Expenses Table */}
+   
         {loading ? (
           <p className="text-center">Loading expenses...</p>
         ) : expenses.length === 0 ? (
@@ -304,14 +302,12 @@ export default function AddExpensesPage() {
               </tbody>
             </table>
 
-            {/* Total Expense */}
             <div className="text-right mt-4 font-bold text-lg">
               Total Expense: Rs. {totalExpense.toLocaleString()}
             </div>
           </>
         )}
 
-        {/* Generate Graph Button */}
         <div className="flex justify-center mt-6">
           <button
             onClick={() => navigate("/ExpensesGraphPage")}
@@ -321,7 +317,6 @@ export default function AddExpensesPage() {
           </button>
         </div>
 
-        {/* Download PDF Button */}
         <div className="flex justify-center mt-4">
           <button
             onClick={generatePDF}
@@ -332,7 +327,7 @@ export default function AddExpensesPage() {
         </div>
       </div>
 
-      {/* Expense image at bottom-right */}
+
       <img
         src={expenseImage}
         alt="Expense"

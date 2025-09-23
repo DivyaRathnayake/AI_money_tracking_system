@@ -25,7 +25,7 @@ const HelloPage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+      
       <div className="flex flex-col items-center justify-center flex-grow text-center p-10">
         <h1 className="text-3xl font-bold mb-4" data-aos="fade-up" data-aos-delay="200">
           Need Help?

@@ -7,7 +7,6 @@ import LoginPage from './components/login';
 import HelloPage from './components/hello';
 import AboutPage from './components/about';
 import HelpPage from './components/help';
-import AccountSettings from './components/myaccount';
 import AddIncomePage from './components/addincome';
 import AddExpensesPage from './components/addexpenses';
 import IncomeGraphPage from './components/IncomeGraphPage';
@@ -29,12 +28,11 @@ function App() {
         <Route path='/hello' element={<HelloPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/help' element={<HelpPage />} />
-        <Route path='/Account' element={<AccountSettings />} />
-        <Route path="/addincome" element={<AddIncomePage />} />   
-         <Route path="/addexpenses" element={<AddExpensesPage />} /> 
-        <Route path="/IncomeGraphPage" element={<IncomeGraphPage/>} />
-        <Route path="/ExpensesGraphPage" element={<ExpensesGraphPage/>} />
-         <Route path="/recommendations" element={<Recommendations/>} />
+        <Route path="/addincome" element={<AddIncomePage />} />
+        <Route path="/addexpenses" element={<AddExpensesPage />} />
+        <Route path="/IncomeGraphPage" element={<IncomeGraphPage />} />
+        <Route path="/ExpensesGraphPage" element={<ExpensesGraphPage />} />
+        <Route path="/recommendations" element={<Recommendations />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 

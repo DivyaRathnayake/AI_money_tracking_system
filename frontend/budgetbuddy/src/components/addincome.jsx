@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import incomeImage from "../assets/income.png";
-
-// 📌 PDF imports
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -16,7 +14,7 @@ const AddIncomePage = () => {
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
 
-  // 📌 Toast state
+  // Toast state
   const [toast, setToast] = useState({ message: "", type: "" });
 
   const showToast = (message, type = "success") => {
@@ -146,7 +144,7 @@ const AddIncomePage = () => {
     setCurrentId(income.id);
   };
 
-  // 📌 Generate PDF
+
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.text("Income Report", 14, 15);
@@ -212,13 +210,12 @@ const AddIncomePage = () => {
         </div>
       </nav>
 
-      {/* Main Container */}
       <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-8 relative z-10">
         <h2 className="text-3xl font-bold mb-6 text-center">
           {editMode ? "Edit Income" : "Your Incomes"}
         </h2>
 
-        {/* Form */}
+
         <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-4 max-w-md mx-auto">
           <input
             type="text"
@@ -261,7 +258,6 @@ const AddIncomePage = () => {
           </div>
         </form>
 
-        {/* Incomes Table */}
         {loading ? (
           <p className="text-center">Loading incomes...</p>
         ) : incomes.length === 0 ? (
@@ -304,7 +300,7 @@ const AddIncomePage = () => {
               </tbody>
             </table>
 
-            {/* Total Income */}
+       
             <div className="text-right mt-4 font-bold text-lg">
               Total Income: Rs. {totalIncome.toLocaleString()}
             </div>
@@ -321,7 +317,7 @@ const AddIncomePage = () => {
           </button>
         </div>
 
-        {/* Download PDF Button */}
+ 
         <div className="flex justify-center mt-4">
           <button
             onClick={generatePDF}
@@ -332,7 +328,7 @@ const AddIncomePage = () => {
         </div>
       </div>
 
-      {/* Income image at bottom-right */}
+
       <img
         src={incomeImage}
         alt="Income"

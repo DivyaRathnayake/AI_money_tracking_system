@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { FaTimes } from "react-icons/fa"; //  Cut/close icon
+import { FaTimes } from "react-icons/fa"; 
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -9,8 +9,8 @@ export default function ForgotPassword() {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:5000/forgot-password", { email });
-      alert(res.data.message); //  Success popup
-      setEmail(""); // clear input
+      alert(res.data.message); 
+      setEmail(""); 
     } catch (err) {
       alert(err.response?.data?.message || "Something went wrong"); 
     }
@@ -26,10 +26,10 @@ export default function ForgotPassword() {
         </div>
       </nav>
 
-      {/* Forgot Password Box */}
+      
       <div className="flex-grow flex items-center justify-center p-6">
         <div className="relative bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-          {/* Cut Mark (Return to Login) */}
+          
           <a
             href="/login"
             className="absolute top-3 right-3 text-gray-400 hover:text-purple-500 transition"

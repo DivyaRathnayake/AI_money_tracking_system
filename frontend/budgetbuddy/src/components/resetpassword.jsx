@@ -4,7 +4,7 @@ import axios from "axios";
 import { FaTimes } from "react-icons/fa";
 
 export default function ResetPassword() {
-  const { token } = useParams(); // gets token from URL
+  const { token } = useParams(); 
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,8 +18,8 @@ export default function ResetPassword() {
 
     try {
       const res = await axios.post(`http://localhost:5000/reset-password/${token}`, { password });
-      alert(res.data.message); // ✅ Success message
-      navigate("/login"); // redirect to login page
+      alert(res.data.message); 
+      navigate("/login"); 
     } catch (err) {
       alert(err.response?.data?.message || "Something went wrong");
     }
@@ -35,10 +35,9 @@ export default function ResetPassword() {
         </div>
       </nav>
 
-      {/* Reset Password Box */}
       <div className="flex-grow flex items-center justify-center p-6">
         <div className="relative bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-          {/* Cut Mark (Return to Login) */}
+  
           <button
             onClick={() => navigate("/login")}
             className="absolute top-3 right-3 text-gray-400 hover:text-pink-500 transition"

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
-import { CheckCircleIcon, XCircleIcon } from "lucide-react"; // icons
+import { CheckCircleIcon, XCircleIcon } from "lucide-react"; 
 import moneypig from "../assets/moneypig.jpg";
 
 const LoginPage = () => {
@@ -47,7 +47,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col relative">
-      {/* Top Center Popup */}
+    
       {popup.show && (
         <div className="fixed top-5 left-1/2 transform -translate-x-1/2 z-50">
           <div
@@ -65,7 +65,7 @@ const LoginPage = () => {
         </div>
       )}
 
-      {/* Navigation Bar */}
+    
       <nav className="bg-purple-300 p-4 text-gray-500">
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-m">BudgetBuddy</div>
@@ -76,10 +76,10 @@ const LoginPage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+    
       <div className="flex items-center justify-center h-full flex-grow">
         <div className="bg-white p-8 rounded-lg shadow-lg flex w-3/4 max-w-4xl">
-          {/* Image Section */}
+      
           <div className="hidden lg:flex w-3/4 justify-center items-center">
             <img
               src={moneypig}
@@ -88,7 +88,7 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Login Form */}
+        
           <div className="w-1/2 p-6">
             <h1 className="text-2xl font-bold text-center mb-6">BUDGET BUDDY</h1>
             <h2 className="text-xl font-semibold text-center mb-4">Login</h2>

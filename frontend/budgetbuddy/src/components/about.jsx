@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
-import aboutImage from "../assets/about.png"; // Make sure this image exists
+import aboutImage from "../assets/about.png"; 
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -14,7 +14,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-200 to-white">
-      {/* Navbar */}
+    
       <nav className="bg-white p-4 text-gray-500">
         <div className="container mx-auto flex justify-between items-center">
           <div className="font-bold text-m">BudgetBuddy</div>
@@ -25,7 +25,6 @@ const About = () => {
         </div>
       </nav>
 
-      {/* About Section */}
       <div className="flex flex-col items-center justify-center py-10">
         <h1 className="text-4xl font-bold text-gray-900 mb-4" data-aos="fade-up">About Us</h1>
 
@@ -53,7 +52,6 @@ const About = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="text-center text-lg py-1 text-gray-700 font-semibold mt-[40px]" data-aos="fade-up">
         Join us today and let Budget Buddy be your trusted companion on the path to financial freedom!
       </div>
